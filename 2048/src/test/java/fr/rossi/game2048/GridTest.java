@@ -2,14 +2,12 @@ package fr.rossi.game2048;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collection;
-
 import org.junit.jupiter.api.Test;
 
 public class GridTest {
 
     @Test
-    void checkAllEmpty() {
+    void getEmpty() {
         // given
         final int size = 4;
 

@@ -2,13 +2,17 @@ package fr.rossi.game2048;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public class Grid {
     private final Integer[][] data;
 
@@ -31,7 +35,7 @@ public class Grid {
                 .mapToObj(row -> range(0, this.data[row].length).mapToObj(col -> new Coord(row, col)))
                 .flatMap(Function.identity())
                 .filter(coord -> this.get(coord) == null)
-                .collect(toList());
+                .toList();
     }
 
     Integer get(Coord coord) {
@@ -43,8 +47,8 @@ public class Grid {
     }
 
     Grid setValue(int value) {
-        final List<Coord> empty = this.getEmpty();
-        final Coord coord = empty.get(new Random().nextInt(empty.size()));
+        var empty = this.getEmpty();
+        var coord = empty.get(new Random().nextInt(empty.size()));
         this.data[coord.row()][coord.col()] = Integer.valueOf(value);
         return this;
     }
