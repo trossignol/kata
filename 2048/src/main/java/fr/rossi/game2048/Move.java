@@ -41,8 +41,6 @@ public class Move {
                 output.add(values.get(i));
             }
         }
-        System.out.println(ArrayUtils.toString(data));
-        System.out.println(output);
         return range(0, data.length)
                 .mapToObj(i -> i < output.size() ? output.get(i) : null)
                 .toArray(Integer[]::new);
