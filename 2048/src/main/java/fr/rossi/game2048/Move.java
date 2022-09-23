@@ -1,11 +1,14 @@
 package fr.rossi.game2048;
 
+import static java.util.Arrays.stream;
 import static java.util.stream.IntStream.range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -17,16 +20,21 @@ public class Move {
     private final Direction direction;
     private final Grid grid;
 
-    public Grid apply() {
-        var rows = matrixToRows(direction, this.grid.getData())
+    public Optional<Grid> apply() {
+        var initData = this.grid.getData();
+        var rows = matrixToRows(direction, initData)
                 .stream()
                 .map(Move::compress)
                 .toList();
-        return new Grid(rowsToMatrix(direction, rows));
+
+        var newData = rowsToMatrix(direction, rows);
+        return Arrays.deepEquals(initData, newData)
+                ? Optional.empty()
+                : Optional.of(new Grid(newData));
     }
 
     static Integer[] compress(Integer... data) {
-        var values = Arrays.stream(data).filter(Objects::nonNull).toList();
+        var values = stream(data).filter(Objects::nonNull).toList();
 
         var output = new ArrayList<>();
         for (int i = 0; i < values.size(); i++) {
@@ -91,6 +99,14 @@ public class Move {
                         })
                         .toArray(Integer[][]::new);
         };
+    }
+
+    static boolean isOver(Grid grid) {
+        return grid.getEmpty().isEmpty()
+                && Stream.of(Direction.UP, Direction.LEFT)
+                        .map(direction -> new Move(direction, grid))
+                        .map(Move::apply)
+                        .allMatch(Optional::isEmpty);
     }
 
     public enum Direction {

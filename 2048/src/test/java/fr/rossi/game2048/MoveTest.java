@@ -1,6 +1,8 @@
 package fr.rossi.game2048;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -20,23 +22,36 @@ public class MoveTest {
 
         // when
         var newGrid = move.apply();
-        System.out.println(grid);
-        System.out.println("-------------------------");
-        System.out.println(newGrid);
 
         // then
         final Integer[][] expected = { { 2, 2, 4, 2 }, { null, null, null, 4 }, { null, null, null, 4 },
                 { null, null, null, null } };
-        assertArrayEquals(expected, newGrid.getData());
+        assertArrayEquals(expected, newGrid.map(Grid::getData).orElse(null));
     }
 
     @Test
     void simple_compress() {
+        assertArrayEquals(Move.compress(1, 1), new Integer[] { 2, null });
         assertArrayEquals(Move.compress(1, 2), new Integer[] { 1, 2 });
         assertArrayEquals(Move.compress(2, 2), new Integer[] { 4, null });
         assertArrayEquals(Move.compress(2, 4, 2), new Integer[] { 2, 4, 2 });
         assertArrayEquals(Move.compress(2, null, null, 2), new Integer[] { 4, null, null, null });
         assertArrayEquals(Move.compress(2, null, null, 1), new Integer[] { 2, 1, null, null });
+    }
+
+    @Test
+    void game_over() {
+        Integer[][] data = { { null, null }, { null, null } };
+        assertFalse(Move.isOver(new Grid(data)));
+
+        data = new Integer[][] { { 1, null }, { 1, null } };
+        assertFalse(Move.isOver(new Grid(data)));
+
+        data = new Integer[][] { { 1, 1 }, { 1, 2 } };
+        assertFalse(Move.isOver(new Grid(data)));
+
+        data = new Integer[][] { { 2, 1 }, { 1, 2 } };
+        assertTrue(Move.isOver(new Grid(data)));
     }
 
     @Test

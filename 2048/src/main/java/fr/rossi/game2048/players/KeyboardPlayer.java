@@ -1,13 +1,12 @@
 package fr.rossi.game2048.players;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Scanner;
 
 import fr.rossi.game2048.Grid;
 import fr.rossi.game2048.Move.Direction;
 
-public class KeyboardPlayer implements Player, Closeable {
+public class KeyboardPlayer implements Player {
     private final Scanner keyboard;
 
     public KeyboardPlayer() {
