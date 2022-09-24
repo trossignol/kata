@@ -2,7 +2,7 @@ package fr.rossi.game2048;
 
 import java.io.IOException;
 
-import fr.rossi.game2048.players.AIPlayer;
+import fr.rossi.game2048.players.ai.AIPlayer;
 
 public class Main {
     public static void main(String[] args) throws IOException {

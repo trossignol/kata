@@ -1,4 +1,4 @@
-package fr.rossi.game2048.players;
+package fr.rossi.game2048.players.ai;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,7 +17,7 @@ public class AIPlayerTest {
         final Integer[][] data = { { 1, null }, { null, 1 } };
 
         // when
-        var grids = AIPlayer.simulateValues(new Grid(data));
+        var grids = DirectionNode.simulateValues(new Grid(data));
 
         // then
         assertEquals(4, grids.size());

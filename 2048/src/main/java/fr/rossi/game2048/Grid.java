@@ -6,6 +6,7 @@ import static java.util.stream.IntStream.range;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -51,6 +52,13 @@ public class Grid {
         var coord = empty.get(new Random().nextInt(empty.size()));
         this.data[coord.row()][coord.col()] = Integer.valueOf(value);
         return this;
+    }
+
+    public int total() {
+        return stream(this.data).flatMap(row -> stream(row))
+                .filter(Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .sum();
     }
 
     public int hashCode() {
