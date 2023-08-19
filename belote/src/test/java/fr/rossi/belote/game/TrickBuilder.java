@@ -11,11 +11,7 @@ final class TrickBuilder {
     public TrickBuilder(Color trump) {
         this.trick = new TrickImpl(trump);
     }
-
-    public TrickBuilder card(Figure figure, Color color) {
-        return this.card(null, figure, color);
-    }
-
+    
     public TrickBuilder card(Player player, Figure figure, Color color) {
         this.trick.addCard(player, new Card(figure, color));
         return this;

@@ -1,13 +1,15 @@
 package fr.rossi.belote.game;
 
-import fr.rossi.belote.Params;
 import fr.rossi.belote.card.Card;
 import fr.rossi.belote.card.Color;
 import fr.rossi.belote.card.Figure;
 import fr.rossi.belote.domain.Player;
 import fr.rossi.belote.domain.Team;
+import fr.rossi.belote.domain.broadcast.Broadcast;
+import fr.rossi.belote.domain.event.RoundEnd;
+import fr.rossi.belote.domain.event.TrickEnd;
 import fr.rossi.belote.score.ScoreCalculator;
-import lombok.extern.java.Log;
+import fr.rossi.belote.utils.Params;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +20,19 @@ import static fr.rossi.belote.exception.TechnicalException.assertNotNull;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-@Log
 public class Round {
 
     private static final int NB_TRICKS = Card.nbCards() / Params.NB_PLAYERS;
 
+    private final Broadcast broadcast;
     private final PlayersHandler players;
     private final Color trumpColor;
     private final Team trumpTeam;
     private final Map<Team, List<TrickImpl>> wonTricks;
 
-    Round(PlayersHandler players, Color trumpColor, Team trumpTeam) {
+    Round(Broadcast broadcast, PlayersHandler players, Color trumpColor, Team trumpTeam) {
         super();
+        this.broadcast = broadcast;
         this.players = players;
         this.trumpColor = trumpColor;
         this.trumpTeam = trumpTeam;
@@ -37,25 +40,25 @@ public class Round {
                 .collect(toMap(identity(), t -> new ArrayList<>(NB_TRICKS)));
     }
 
-    public Map<Team, Integer> run() {
+    public RoundEnd run() {
         Player winnerPlayer = null;
         var currentPlayers = this.players;
 
         for (int i = 0; i < NB_TRICKS; i++) {
             var trick = new TrickImpl(this.trumpColor);
             winnerPlayer = trick.run(currentPlayers.players());
+            this.broadcast.consume(new TrickEnd(trick.cardsAndPlayers(), winnerPlayer));
             this.wonTricks.get(winnerPlayer.team()).add(trick);
             currentPlayers = currentPlayers.next(winnerPlayer);
         }
         assertNotNull("No winner player found", winnerPlayer);
-        return scoresForTricks(Optional.ofNullable(winnerPlayer).orElseThrow().team());
+        return scoresForTricks(winnerPlayer.team());
     }
 
-    private Map<Team, Integer> scoresForTricks(Team lastWinner) {
+    private RoundEnd scoresForTricks(Team lastWinner) {
         var scores = this.wonTricks.entrySet().stream()
                 .collect(toMap(Map.Entry::getKey,
                         e -> e.getValue().stream().mapToInt(TrickImpl::getPoints).sum()));
-
         return new ScoreCalculator(scores, this.trumpTeam, lastWinner, this.beloteTeam())
                 .getScoresForPoints();
     }

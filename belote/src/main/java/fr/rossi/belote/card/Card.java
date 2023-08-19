@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public record Card(Figure figure, Color color) {
+public record Card(Figure figure, Color color) implements Comparable<Card> {
 
     public static List<Card> getCards() {
         var cards = new ArrayList<>(Arrays.stream(Figure.values())
@@ -22,5 +22,17 @@ public record Card(Figure figure, Color color) {
 
     public int getPoints(Color trump) {
         return figure.getPoints(this.color == trump);
+    }
+
+    @Override
+    public String toString() {
+        return this.figure + "-" + this.color;
+    }
+
+    @Override
+    public int compareTo(Card o) {
+        return this.color == o.color
+                ? this.figure.compareTo(o.figure)
+                : this.color.compareTo(o.color);
     }
 }

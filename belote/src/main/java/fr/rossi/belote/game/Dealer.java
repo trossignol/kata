@@ -2,7 +2,10 @@ package fr.rossi.belote.game;
 
 import fr.rossi.belote.card.Card;
 import fr.rossi.belote.domain.Player;
-import lombok.extern.java.Log;
+import fr.rossi.belote.domain.broadcast.Broadcast;
+import fr.rossi.belote.domain.event.ChooseTrump;
+import fr.rossi.belote.domain.event.TrumpChosen;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +16,15 @@ import java.util.stream.IntStream;
 import static fr.rossi.belote.exception.TechnicalException.assertGreaterOrEquals;
 import static fr.rossi.belote.exception.TechnicalException.assertTrue;
 
-@Log
+@Slf4j
 public class Dealer {
+    private final Broadcast broadcast;
     private final List<Player> players;
     private final ArrayList<Card> cards;
 
-    public Dealer(List<Player> players, List<Card> cards) {
+    public Dealer(Broadcast broadcast, List<Player> players, List<Card> cards) {
         super();
+        this.broadcast = broadcast;
         this.players = players;
         this.cards = new ArrayList<>(cards);
     }
@@ -43,19 +48,20 @@ public class Dealer {
     }
 
     private Optional<TrumpParams> chooseTrump(Card card) {
-        log.info("Choose trump: " + card);
+        log.debug("Choose trump: {}", card);
+        this.broadcast.consume(new ChooseTrump(card, this.players.get(0)));
         for (var round = 1; round <= 2; round++) {
-            for (Player player : players) {
+            for (Player player : this.players) {
                 var playerResponse = player.chooseTrump(card, round == 1);
                 if (playerResponse.isPresent()) {
                     var color = playerResponse.get();
                     assertTrue(String.format("Error in trump selection (round=%d / card=%s / selected=%s)",
                                     round, card, color),
                             color == card.color() ^ round == 2);
-                    log.info("[Round  " + round + "] " + player + " choose " + color);
+                    this.broadcast.consume(new TrumpChosen(card, player, color));
                     return Optional.of(new TrumpParams(player, color));
                 }
-                log.info("[Round  " + round + "] " + player + " passed");
+                log.debug("[Round {}] {} passed", round, player);
             }
         }
         return Optional.empty();

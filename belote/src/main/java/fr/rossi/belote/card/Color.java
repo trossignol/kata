@@ -2,8 +2,18 @@ package fr.rossi.belote.card;
 
 import java.util.Collection;
 
+import static fr.rossi.belote.utils.TextColor.colorEmoji;
+
 public enum Color {
-    COEUR, CARREAU, PIQUE, TREFLE;
+    COEUR(colorEmoji("❤")),
+    PIQUE(colorEmoji("♠")),
+    CARREAU(colorEmoji("♦")),
+    TREFLE(colorEmoji("♣"));
+    private final String emoji;
+
+    Color(String emoji) {
+        this.emoji = emoji;
+    }
 
     public boolean has(Card card) {
         return this == card.color();
@@ -11,5 +21,10 @@ public enum Color {
 
     public Collection<Card> filter(Collection<Card> cards) {
         return cards.stream().filter(this::has).toList();
+    }
+
+    @Override
+    public String toString() {
+        return this.name().charAt(0) + this.emoji;
     }
 }

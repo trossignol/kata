@@ -3,15 +3,14 @@ package fr.rossi.belote.domain;
 import fr.rossi.belote.card.Card;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface Trick {
 
-    List<Card> cards();
+    CardsAndPlayers cardsAndPlayers();
 
     CardAndPlayer winner();
 
-    Collection<Card> playableCards(Collection<Card> hand);
+    Collection<Card> playableCards(Player player);
 
-    boolean isPartnerLeader();
+    boolean isPartnerLeader(Player player);
 }

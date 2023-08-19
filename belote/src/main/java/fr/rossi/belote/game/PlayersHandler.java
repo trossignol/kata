@@ -1,15 +1,13 @@
 package fr.rossi.belote.game;
 
-import fr.rossi.belote.Params;
 import fr.rossi.belote.domain.Player;
 import fr.rossi.belote.domain.Team;
-import lombok.extern.java.Log;
+import fr.rossi.belote.utils.Params;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@Log
 public class PlayersHandler {
 
     private final List<Team> teams;

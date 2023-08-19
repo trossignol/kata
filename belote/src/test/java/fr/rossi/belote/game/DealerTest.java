@@ -2,6 +2,7 @@ package fr.rossi.belote.game;
 
 import fr.rossi.belote.card.Card;
 import fr.rossi.belote.domain.Player;
+import fr.rossi.belote.domain.broadcast.Broadcast;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,7 +15,7 @@ class DealerTest {
     @Test
     void testDeal() {
         final List<Player> players = PLAYERS.players();
-        while (new Dealer(players, Card.getCards()).deal().isEmpty()) ;
+        while (new Dealer(new Broadcast(), players, Card.getCards()).deal().isEmpty()) ;
 
         players.forEach(player -> assertEquals(8, player.hand().size()));
         assertEquals(32, players.stream().map(Player::hand).flatMap(List::stream).distinct().count());

@@ -1,20 +1,18 @@
 package fr.rossi.belote.player;
 
-import fr.rossi.belote.Params;
 import fr.rossi.belote.card.Card;
 import fr.rossi.belote.card.Color;
 import fr.rossi.belote.domain.Player;
 import fr.rossi.belote.domain.Team;
 import fr.rossi.belote.domain.Trick;
+import fr.rossi.belote.utils.Params;
 import lombok.EqualsAndHashCode;
-import lombok.extern.java.Log;
 
 import java.security.SecureRandom;
 import java.util.*;
 
 import static fr.rossi.belote.exception.TechnicalException.assertTrue;
 
-@Log
 @EqualsAndHashCode(of = "name")
 public class SimplePlayer implements Player {
 
@@ -33,18 +31,19 @@ public class SimplePlayer implements Player {
     }
 
     @Override
+    public String toString() {
+        return String.format("P-%S", this.name);
+    }
+
+    @Override
     public Team team() {
         return this.team;
     }
 
     @Override
-    public void team(Team team) {
+    public Player team(Team team) {
         this.team = team;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Player: %s", this.name);
+        return this;
     }
 
     @Override
@@ -53,16 +52,18 @@ public class SimplePlayer implements Player {
     }
 
     @Override
-    public void clearHand() {
+    public Player clearHand() {
         this.hand.clear();
+        return this;
     }
 
     @Override
-    public void addCards(List<Card> cards) {
+    public Player addCards(List<Card> cards) {
         assertTrue(String.format("Hand size should be lower than %d (actual size=%d / added cards=%d)",
                         Card.nbCards() / Params.NB_PLAYERS, this.hand.size(), cards.size()),
                 this.hand.size() + cards.size() <= Card.nbCards() / Params.NB_PLAYERS);
         this.hand.addAll(cards);
+        return this;
     }
 
     @Override
@@ -83,12 +84,17 @@ public class SimplePlayer implements Player {
     }
 
     @Override
-    public Card play(Trick trick) {
-        var playableCards = trick.playableCards(this.hand);
+    public final Card play(Trick trick) {
+        var playableCards = trick.playableCards(this);
         // TODO Random choose
-        var card = getRandom(playableCards);
+        var card = this.cardToPlay(trick, playableCards);
+        assertTrue("Can't play card=" + card, playableCards.contains(card));
         this.hand.remove(card);
         return card;
+    }
+
+    protected Card cardToPlay(Trick trick, Collection<Card> playableCards) {
+        return getRandom(playableCards);
     }
 }
 

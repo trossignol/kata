@@ -3,32 +3,31 @@ package fr.rossi.belote.score;
 import fr.rossi.belote.card.Card;
 import fr.rossi.belote.card.Color;
 import fr.rossi.belote.domain.Team;
-import lombok.extern.java.Log;
+import fr.rossi.belote.domain.event.RoundEnd;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.ToIntFunction;
+import java.util.*;
 
 import static fr.rossi.belote.exception.TechnicalException.assertEquals;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-@Log
+@Slf4j
 public record ScoreCalculator(Map<Team, Integer> inScores,
                               Team trumpTeam, Team lastWinner, Optional<Team> beloteTeam) {
 
     private static final int MAX_POINTS = Card.getCards().stream().mapToInt(card -> card.getPoints(Color.COEUR)).sum();
     private static final int LAST_10_POINTS = 10;
     private static final int BELOTE_POINTS = 20;
-    private static final int SHUTOUT_POINTS = 252;
+    private static final Map<RoundEnd.Status, Integer> SCORES_FOR_STATUS = Map.of(
+            RoundEnd.Status.SHUTOUT, 252,
+            RoundEnd.Status.IN, MAX_POINTS + LAST_10_POINTS);
 
     private static <T> void addScore(Map<T, Integer> scores, T key, int toAdd) {
         scores.compute(key, (t, s) -> Optional.ofNullable(s).orElseThrow() + toAdd);
     }
 
-    public Map<Team, Integer> getScoresForPoints() {
+    public RoundEnd getScoresForPoints() {
         assertEquals("Error in sum of points", MAX_POINTS, inScores.values().stream().mapToInt(s -> s).sum());
         var scores = new HashMap<>(inScores);
 
@@ -36,8 +35,7 @@ public record ScoreCalculator(Map<Team, Integer> inScores,
         final List<Team> shutoutTeams = scores.entrySet().stream()
                 .filter(e -> e.getValue() == 0).map(Map.Entry::getKey).toList();
         if (!shutoutTeams.isEmpty()) {
-            log.info(shutoutTeams + " is shutout!");
-            return buildScoresMap(team -> shutoutTeams.contains(team) ? 0 : SHUTOUT_POINTS);
+            return buildRoundEnd(shutoutTeams, RoundEnd.Status.SHUTOUT);
         }
 
         // Last 10
@@ -45,22 +43,23 @@ public record ScoreCalculator(Map<Team, Integer> inScores,
         this.beloteTeam.ifPresent(team -> addScore(scores, team, BELOTE_POINTS));
 
         // Get winner
+
         var winner = scores.entrySet().stream()
-                .max((e1, e2) -> Integer.compare(e1.getValue(), e2.getValue()))
+                .max(Comparator.comparingInt(Map.Entry::getValue))
                 .map(Map.Entry::getKey).orElseThrow();
 
         if (winner.equals(trumpTeam)) {
-            return scores;
+            return new RoundEnd(winner, RoundEnd.Status.SIMPLE, scores);
         }
 
-        // In
-        log.info(trumpTeam + " is in! (" + scores.get(trumpTeam) + ")");
-        return buildScoresMap(team -> team.equals(trumpTeam) ? 0 : MAX_POINTS + LAST_10_POINTS);
+        return buildRoundEnd(List.of(this.trumpTeam), RoundEnd.Status.IN);
     }
 
-    private Map<Team, Integer> buildScoresMap(ToIntFunction<Team> getPoints) {
-        return this.inScores.keySet().stream()
-                .collect(toMap(identity(), team -> getPoints.applyAsInt(team)
+    private RoundEnd buildRoundEnd(List<Team> losers, RoundEnd.Status status) {
+        var winner = this.inScores.keySet().stream().filter(team -> !losers.contains(team)).findAny().orElseThrow();
+        var scores = this.inScores.keySet().stream()
+                .collect(toMap(identity(), team -> (losers.contains(team) ? 0 : SCORES_FOR_STATUS.get(status))
                         + this.beloteTeam.filter(team::equals).map(t -> BELOTE_POINTS).orElse(0)));
+        return new RoundEnd(winner, status, scores);
     }
 }

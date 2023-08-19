@@ -16,7 +16,7 @@ class ScoreCalculatorTest {
                               int t1InScore, int t2InScore, int t1OutScore, int t2OutScore) {
         assertEquals(Map.of(T1, t1OutScore, T2, t2OutScore),
                 new ScoreCalculator(Map.of(T1, t1InScore, T2, t2InScore), trumpTeam, lastWinnerTeam, beloteTeam)
-                        .getScoresForPoints());
+                        .getScoresForPoints().runScores());
     }
 
     private static void check(int t1InScore, int t2InScore, int t1OutScore, int t2OutScore) {

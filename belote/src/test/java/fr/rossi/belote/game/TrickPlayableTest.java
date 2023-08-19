@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import java.util.List;
 
+import static fr.rossi.belote.TestPlayers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TrickPlayableTest {
@@ -16,8 +17,12 @@ class TrickPlayableTest {
             new Card(Figure.AS, Color.CARREAU), new Card(Figure.DAME, Color.CARREAU),
             new Card(Figure.VALET, Color.COEUR), new Card(Figure.HUIT, Color.COEUR));
 
+    static {
+        P3.clearHand().addCards(HAND);
+    }
+
     private static Collection<Card> play(Color trump, Figure f1, Color c1, Figure f2, Color c2) {
-        return new TrickBuilder(trump).card(f1, c1).card(f2, c2).build().playableCards(HAND);
+        return new TrickBuilder(trump).card(P1, f1, c1).card(P2, f2, c2).build().playableCards(P3);
     }
 
     @Test
@@ -25,7 +30,7 @@ class TrickPlayableTest {
         assertEquals(HAND,
                 new TrickBuilder(Color.COEUR)
                         .build()
-                        .playableCards(HAND));
+                        .playableCards(P3));
     }
 
     @Test
