@@ -2,6 +2,8 @@ package fr.rossi.belote.card;
 
 import java.util.List;
 
+import static fr.rossi.belote.exception.TechnicalException.assertNotEquals;
+
 public enum Figure {
     AS(11),
     DIX(10),
@@ -45,7 +47,7 @@ public enum Figure {
             p2 = figure.getOrder();
         }
 
-        assert p1 != p2;
+        assertNotEquals("Error in figure order", p1, p2);
         return -Integer.compare(p1, p2);
 
     }

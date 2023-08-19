@@ -1,14 +1,14 @@
 package fr.rossi.belote.card;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FigureTest {
+class FigureTest {
 
     private static void checkFiguresOrder(boolean trump, Figure... expected) {
         // Given
@@ -24,12 +24,12 @@ public class FigureTest {
     }
 
     @Test
-     void testFiguresOrder() {
+    void testFiguresOrder() {
         checkFiguresOrder(false, Figure.values());
     }
 
     @Test
-     void testFiguresOrderTrump() {
+    void testFiguresOrderTrump() {
         checkFiguresOrder(true, Figure.VALET, Figure.NEUF, Figure.AS, Figure.DIX, Figure.ROI, Figure.DAME, Figure.HUIT,
                 Figure.SEPT);
     }

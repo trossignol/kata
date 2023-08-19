@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TrickPlayableTest {
+class TrickPlayableTest {
 
     private static final List<Card> HAND = List.of(new Card(Figure.DAME, Color.PIQUE),
             new Card(Figure.AS, Color.CARREAU), new Card(Figure.DAME, Color.CARREAU),

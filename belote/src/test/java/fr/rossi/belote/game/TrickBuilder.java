@@ -3,20 +3,25 @@ package fr.rossi.belote.game;
 import fr.rossi.belote.card.Card;
 import fr.rossi.belote.card.Color;
 import fr.rossi.belote.card.Figure;
+import fr.rossi.belote.domain.Player;
 
-public final class TrickBuilder {
-    private final Trick trick;
+final class TrickBuilder {
+    private final TrickImpl trick;
 
     public TrickBuilder(Color trump) {
-        this.trick = new Trick(new Round(trump));
+        this.trick = new TrickImpl(trump);
     }
 
     public TrickBuilder card(Figure figure, Color color) {
-        this.trick.addCard(new Card(figure, color));
+        return this.card(null, figure, color);
+    }
+
+    public TrickBuilder card(Player player, Figure figure, Color color) {
+        this.trick.addCard(player, new Card(figure, color));
         return this;
     }
 
-    public Trick build() {
+    public TrickImpl build() {
         return this.trick;
     }
 }
