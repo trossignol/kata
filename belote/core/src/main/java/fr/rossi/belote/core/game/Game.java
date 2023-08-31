@@ -15,6 +15,7 @@ import static java.util.stream.Collectors.toMap;
 
 public class Game {
 
+    private final String id;
     private final Broadcast broadcast;
     private final PlayersHandler players;
     private final int scoreMax;
@@ -23,9 +24,11 @@ public class Game {
 
     public Game(List<Team> teams, int scoreMax) {
         super();
+        this.id = UUID.randomUUID().toString();
         this.broadcast = new Broadcast(new LogBroadcast());
         assertEquals("Error in the number of teams", Params.NB_TEAMS, teams.size());
         this.players = new PlayersHandler(teams);
+        this.players.players().forEach(player -> player.gameId(this.id));
         this.players.players().forEach(broadcast::subscribe);
         this.scoreMax = scoreMax;
 

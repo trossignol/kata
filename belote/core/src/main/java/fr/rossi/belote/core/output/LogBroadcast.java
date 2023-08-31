@@ -30,8 +30,8 @@ public class LogBroadcast extends Broadcast {
                     e.player(), e.chosenColor(), e.card());
             case TrickEnd e -> log("{} won trick", YELLOW, "{}",
                     e.winner(), e.cards());
-            case RoundEnd e -> log("{} won round by {}", RED, "scores={} / total={}",
-                    e.winner(), e.status(), sort(e.runScores()), sort(e.scores()));
+            case RoundEnd e -> log("{} won round by {}", RED, "scores={} / table={} / total={}",
+                    e.winner(), e.status(), sort(e.runScores()), sort(e.tableScores()), sort(e.scores()));
         }
     }
 }

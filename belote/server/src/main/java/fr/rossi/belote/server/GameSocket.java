@@ -2,9 +2,8 @@ package fr.rossi.belote.server;
 
 
 import fr.rossi.belote.core.exception.TechnicalException;
-import fr.rossi.belote.server.message.Message;
-import fr.rossi.belote.server.message.PlayCard;
-import fr.rossi.belote.server.message.StartGame;
+import fr.rossi.belote.server.message.in.InMessage;
+import fr.rossi.belote.server.message.out.OutMessage;
 import fr.rossi.belote.server.serializer.MessageSerializer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -12,10 +11,12 @@ import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @ServerEndpoint("/game/{username}")
 @ApplicationScoped
 public class GameSocket {
@@ -30,6 +31,7 @@ public class GameSocket {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) {
+        log.info("New connection user={}", username);
         sessions.put(username, session);
     }
 
@@ -43,24 +45,32 @@ public class GameSocket {
         this.closeSession(session, username);
     }
 
-    @SneakyThrows
     private void closeSession(Session session, String username) {
-        sessions.remove(username).close();
-        session.close();
+        silentClose(sessions.remove(username));
+        silentClose(session);
+    }
+
+    @SneakyThrows
+    private void silentClose(Session session) {
+        if (session != null && session.isOpen()) session.close();
     }
 
     @OnMessage
     public void onMessage(String json, @PathParam("username") String username) {
-        final Message message = this.serializer.read(json);
-        switch (message) {
-            case StartGame m -> this.service.startGame(username, m);
-            case PlayCard m -> this.service.playCard(username, m);
+        log.info("New message from user=" + username + " message=" + json);
+        try {
+            final InMessage message = this.serializer.read(json);
+            this.service.handleMessage(username, message);
+        } catch (Exception e) {
+            log.error("Error handling message for user=" + username, e);
+            throw new TechnicalException("Error handling message for user=" + username, e);
         }
     }
 
-    private void send(String username, Object message) {
+    public void send(String username, OutMessage message) {
         var session = sessions.get(username);
         var jsonMessage = this.serializer.write(message);
+        log.info("Send message to={} message={}", username, jsonMessage);
         TechnicalException.assertNotNull("Session not found for user=" + username, session);
         session.getAsyncRemote().sendObject(jsonMessage, result -> TechnicalException.assertNull(
                 "Error sending message to user=" + username, result.getException()));

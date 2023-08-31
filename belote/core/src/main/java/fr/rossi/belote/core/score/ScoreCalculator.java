@@ -31,35 +31,38 @@ public record ScoreCalculator(Map<Team, Integer> inScores,
         assertEquals("Error in sum of points", MAX_POINTS, inScores.values().stream().mapToInt(s -> s).sum());
         var scores = new HashMap<>(inScores);
 
-        // Shutout
-        final List<Team> shutoutTeams = scores.entrySet().stream()
-                .filter(e -> e.getValue() == 0).map(Map.Entry::getKey).toList();
-        if (!shutoutTeams.isEmpty()) {
-            return buildRoundEnd(shutoutTeams, RoundEnd.Status.SHUTOUT);
-        }
-
         // Last 10
         addScore(scores, lastWinner, LAST_10_POINTS);
+
+        // Check shutout
+        final List<Team> shutoutTeams = scores.entrySet().stream()
+                .filter(e -> e.getValue() == 0).map(Map.Entry::getKey).toList();
+
+        // Belote
         this.beloteTeam.ifPresent(team -> addScore(scores, team, BELOTE_POINTS));
 
-        // Get winner
+        // Shutout
+        if (!shutoutTeams.isEmpty()) {
+            return buildRoundEnd(shutoutTeams, RoundEnd.Status.SHUTOUT, scores);
+        }
 
+        // Get winner
         var winner = scores.entrySet().stream()
                 .max(Comparator.comparingInt(Map.Entry::getValue))
                 .map(Map.Entry::getKey).orElseThrow();
 
         if (winner.equals(trumpTeam)) {
-            return new RoundEnd(winner, RoundEnd.Status.SIMPLE, scores);
+            return new RoundEnd(winner, RoundEnd.Status.SIMPLE, scores, scores);
         }
 
-        return buildRoundEnd(List.of(this.trumpTeam), RoundEnd.Status.IN);
+        return buildRoundEnd(List.of(this.trumpTeam), RoundEnd.Status.IN, scores);
     }
 
-    private RoundEnd buildRoundEnd(List<Team> losers, RoundEnd.Status status) {
+    private RoundEnd buildRoundEnd(List<Team> losers, RoundEnd.Status status, Map<Team, Integer> tableScore) {
         var winner = this.inScores.keySet().stream().filter(team -> !losers.contains(team)).findAny().orElseThrow();
-        var scores = this.inScores.keySet().stream()
+        var runScores = this.inScores.keySet().stream()
                 .collect(toMap(identity(), team -> (losers.contains(team) ? 0 : SCORES_FOR_STATUS.get(status))
                         + this.beloteTeam.filter(team::equals).map(t -> BELOTE_POINTS).orElse(0)));
-        return new RoundEnd(winner, status, scores);
+        return new RoundEnd(winner, status, tableScore, runScores);
     }
 }

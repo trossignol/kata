@@ -11,6 +11,8 @@ public interface Player extends EventConsumer {
 
     String name();
 
+    Player gameId(String gameId);
+
     Team team();
 
     Player team(Team team);

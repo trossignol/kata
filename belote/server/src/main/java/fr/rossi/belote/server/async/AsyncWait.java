@@ -1,4 +1,4 @@
-package fr.rossi.belote.core.async;
+package fr.rossi.belote.server.async;
 
 import fr.rossi.belote.core.exception.TechnicalException;
 import lombok.SneakyThrows;
@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AsyncWait {
@@ -16,8 +17,16 @@ public class AsyncWait {
     private AsyncWait() {
     }
 
+    public static String newUuid(String username) {
+        String uuid;
+        do {
+            uuid = String.format("%s-%s", username, UUID.randomUUID());
+        } while (waitedKeys.contains(uuid));
+        return uuid;
+    }
+
     @SuppressWarnings("unchecked")
-    public static <T> Optional<T> waitFor(String uuid, int delayInSeconds) {
+    public static <T> Optional<T> waitFor(String uuid, int delayInSeconds, boolean errorOnNoAnswer) {
         waitedKeys.add(uuid);
         var stepInMs = 100;
         var delayInMs = delayInSeconds * 1_000;
@@ -31,10 +40,15 @@ public class AsyncWait {
             }
         }
 
+        TechnicalException.assertFalse(
+                String.format("No response for uuid=%s after=%ds", uuid, delayInSeconds),
+                errorOnNoAnswer);
         return Optional.empty();
     }
 
     public static void response(String uuid, Object response) {
+        TechnicalException.assertNotNull("Uuid is required", uuid);
+        TechnicalException.assertNotNull("Reponse is required", response);
         TechnicalException.assertTrue(
                 String.format("Response not expected for uuid=%s (value=%s)", uuid, response),
                 waitedKeys.contains(uuid));

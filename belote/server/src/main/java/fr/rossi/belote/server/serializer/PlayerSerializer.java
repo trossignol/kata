@@ -7,9 +7,9 @@ import fr.rossi.belote.core.domain.Player;
 
 import java.io.IOException;
 
-public class PlayerSerializer extends StdSerializer<Player> {
+class PlayerSerializer extends StdSerializer<Player> {
 
-    public PlayerSerializer() {
+    PlayerSerializer() {
         super(Player.class);
     }
 

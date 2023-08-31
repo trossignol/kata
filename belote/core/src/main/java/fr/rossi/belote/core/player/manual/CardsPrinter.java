@@ -31,10 +31,6 @@ public class CardsPrinter {
                         .collect(joining(" / "))));
     }
 
-    <T extends Comparable<T>> T choose(String msg, Collection<T> inOptions) {
-        return choose(msg, inOptions, false);
-    }
-
     <T extends Comparable<T>> T choose(String msg, Collection<T> inOptions, boolean nullAllowed) {
         var options = new ArrayList<>(inOptions);
         Collections.sort(options);
@@ -52,7 +48,7 @@ public class CardsPrinter {
         throw new TechnicalException("Too many attempts");
     }
 
-    void println(String msg) {
+    private void println(String msg) {
         System.out.println(msg);
     }
 }

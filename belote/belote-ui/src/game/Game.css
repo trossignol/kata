@@ -1,0 +1,18 @@
+#game {
+    display: flex;
+}
+
+#game div {
+    align-items: center;
+    justify-content: center;
+}
+
+#playground {
+    width: 800px;
+    border: 1px red solid;
+}
+
+#infos {
+    width: 200px;
+    border: 1px red solid;
+}

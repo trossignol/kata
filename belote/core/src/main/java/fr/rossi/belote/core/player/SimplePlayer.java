@@ -18,6 +18,7 @@ public class SimplePlayer implements Player {
 
     private final String name;
     private final List<Card> hand;
+    private String gameId;
     private Team team;
 
     public SimplePlayer(String name) {
@@ -31,13 +32,23 @@ public class SimplePlayer implements Player {
     }
 
     @Override
+    public String toString() {
+        return String.format("P-%S", this.name);
+    }
+
+    @Override
     public String name() {
         return this.name;
     }
 
+    protected String gameId() {
+        return this.gameId;
+    }
+
     @Override
-    public String toString() {
-        return String.format("P-%S", this.name);
+    public Player gameId(String gameId) {
+        this.gameId = gameId;
+        return this;
     }
 
     @Override

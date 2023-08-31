@@ -40,7 +40,7 @@ class ScoreCalculatorTest {
 
     @Test
     void testShutout() {
-        check(0, 152, 0, 252);
+        check(152, 0, 252, 0);
     }
 
     @Test
@@ -60,6 +60,6 @@ class ScoreCalculatorTest {
 
     @Test
     void testShutoutWithBelote() {
-        check(T1, T2, Optional.of(T2), 152, 0, 252, 20);
+        check(T1, T1, Optional.of(T2), 152, 0, 252, 20);
     }
 }

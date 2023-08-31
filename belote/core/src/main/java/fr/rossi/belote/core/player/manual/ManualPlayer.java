@@ -29,7 +29,7 @@ public class ManualPlayer extends SimplePlayer {
     public Optional<Color> chooseTrump(Card card, boolean firstRun) {
         if (firstRun) {
             this.printer.printCards(this.hand());
-            return this.printer.choose(String.format("Choose %s as trump", card), List.of(true, false))
+            return this.printer.choose(String.format("Choose %s as trump", card), List.of(true, false), false)
                     ? Optional.of(card.color())
                     : Optional.empty();
         }
@@ -50,6 +50,6 @@ public class ManualPlayer extends SimplePlayer {
     @Override
     protected Card cardToPlay(Trick trick, Collection<Card> playableCards) {
         this.printer.printTable(trick.cardsAndPlayers());
-        return this.printer.choose("Choose a card", playableCards);
+        return this.printer.choose("Choose a card", playableCards, false);
     }
 }

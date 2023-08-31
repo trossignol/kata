@@ -9,13 +9,15 @@ public final class RoundEnd implements Event {
 
     private final Team winner;
     private final Status status;
+    private final Map<Team, Integer> tableScores;
     private final Map<Team, Integer> runScores;
     private Map<Team, Integer> scores;
 
-    public RoundEnd(Team winner, Status status, Map<Team, Integer> runScores) {
+    public RoundEnd(Team winner, Status status, Map<Team, Integer> tableScores, Map<Team, Integer> runScores) {
         super();
         this.winner = winner;
         this.status = status;
+        this.tableScores = tableScores;
         this.runScores = runScores;
     }
 
@@ -25,6 +27,10 @@ public final class RoundEnd implements Event {
 
     public Status status() {
         return status;
+    }
+
+    public Map<Team, Integer> tableScores() {
+        return tableScores;
     }
 
     public Map<Team, Integer> runScores() {
