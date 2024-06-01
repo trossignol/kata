@@ -1,6 +1,7 @@
 package fr.rossi.belote.core.domain.broadcast;
 
 import fr.rossi.belote.core.domain.event.Event;
+import fr.rossi.belote.core.utils.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,10 +19,15 @@ public class Broadcast implements EventConsumer {
 
     public void subscribe(EventConsumer consumer) {
         this.consumers.add(consumer);
+        consumer.setBroadcast(this);
     }
 
     @Override
     public void consume(Event event) {
-        this.consumers.forEach(consumer -> consumer.consume(event));
+        ThreadUtils.parallel(
+                consumers.stream()
+                        .map(consumer -> (Runnable) () -> consumer.consume(event))
+                        .toList()
+                , true);
     }
 }

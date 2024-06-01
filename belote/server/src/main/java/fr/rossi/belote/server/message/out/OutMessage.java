@@ -3,7 +3,7 @@ package fr.rossi.belote.server.message.out;
 import lombok.Getter;
 
 @Getter
-public abstract sealed class OutMessage permits GameStarted, ChooseTrump, PlayCard, AddCards, EventMessage {
+public abstract sealed class OutMessage permits ChooseTrump, PlayCard, AddCards, EventMessage {
 
     private String playerId;
     private String gameId;

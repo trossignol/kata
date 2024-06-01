@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import './App.css'
-import { CallApi } from './CallApi'
 import { Connection } from './Connection'
 import { Game } from './game/Game'
 
@@ -11,7 +10,6 @@ function App() {
     <>
       {!name?.length && <Connection callback={setName} />}
       {name && <Game name={name} />}
-      <CallApi />
     </>
   )
 }

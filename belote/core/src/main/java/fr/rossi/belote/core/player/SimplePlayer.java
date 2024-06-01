@@ -5,14 +5,17 @@ import fr.rossi.belote.core.card.Color;
 import fr.rossi.belote.core.domain.Player;
 import fr.rossi.belote.core.domain.Team;
 import fr.rossi.belote.core.domain.Trick;
+import fr.rossi.belote.core.exception.ActionTimeoutException;
 import fr.rossi.belote.core.utils.Params;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.SecureRandom;
 import java.util.*;
 
 import static fr.rossi.belote.core.exception.TechnicalException.assertTrue;
 
+@Slf4j
 @EqualsAndHashCode(of = "name")
 public class SimplePlayer implements Player {
 
@@ -62,7 +65,6 @@ public class SimplePlayer implements Player {
         return this;
     }
 
-    @Override
     public List<Card> hand() {
         return this.hand;
     }
@@ -83,8 +85,7 @@ public class SimplePlayer implements Player {
     }
 
     @Override
-    public Optional<Color> chooseTrump(Card card, boolean firstRun) {
-        // TODO Random choose
+    public Optional<Color> chooseTrump(Card card, boolean firstRun) throws ActionTimeoutException {
         if (new SecureRandom().nextInt(10) != 0) {
             return Optional.empty();
         }
@@ -100,16 +101,15 @@ public class SimplePlayer implements Player {
     }
 
     @Override
-    public final Card play(Trick trick) {
-        var playableCards = trick.playableCards(this);
-        // TODO Random choose
+    public final Card play(Trick trick) throws ActionTimeoutException {
+        var playableCards = trick.playableCards(this, this.hand);
         var card = this.cardToPlay(trick, playableCards);
         assertTrue("Can't play card=" + card, playableCards.contains(card));
         this.hand.remove(card);
         return card;
     }
 
-    protected Card cardToPlay(Trick trick, Collection<Card> playableCards) {
+    protected Card cardToPlay(Trick trick, Collection<Card> playableCards) throws ActionTimeoutException {
         return getRandom(playableCards);
     }
 }

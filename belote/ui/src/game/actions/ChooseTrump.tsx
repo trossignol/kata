@@ -1,5 +1,6 @@
 import { CardUI } from "../base/CardUI"
 import { Card } from "../base/domain.d"
+import "./ChooseTrump.css"
 
 type ChooseTrumpProps = {
     uuid: string,
@@ -18,10 +19,10 @@ export const ChooseTrump = ({ uuid, round, card, callback }: ChooseTrumpProps) =
 
     const Round1 = () => {
         return (
-            <div>
-                <button onClick={() => choose(card.color)}>Prendre</button>
+            <>
+                <button onClick={() => choose(card.color)}>Prendre</button><br />
                 <button onClick={() => choose(null)}>Passer</button>
-            </div>
+            </>
         )
     }
     const Round2 = () => {
@@ -40,11 +41,15 @@ export const ChooseTrump = ({ uuid, round, card, callback }: ChooseTrumpProps) =
     }
 
     return (
-        <div>
+        <div className="choose-trump">
             <h3>Choisir l'atout</h3>
-            <div className="card-container"><CardUI card={card} /></div>
-            {round == 1 && <Round1 />}
-            {round == 2 && <Round2 />}
+            <div className="card-container">
+                <CardUI card={card} />
+                <div className="choose-trump-action">
+                    {round == 1 && <Round1 />}
+                    {round == 2 && <Round2 />}
+                </div>
+            </div>
         </div>
     )
 }

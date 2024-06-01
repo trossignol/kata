@@ -17,6 +17,8 @@ class PlayerSerializer extends StdSerializer<Player> {
     public void serialize(Player player, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("name", player.name());
+        if (player.team() != null)
+            gen.writeStringField("team", player.team().toString());
         gen.writeEndObject();
     }
 }

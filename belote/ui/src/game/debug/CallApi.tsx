@@ -13,8 +13,7 @@ export const CallApi = () => {
 
     return (
         <>
-            <button onClick={callHello}>Call</button>
-            <div>{message}</div>
+            <button onClick={callHello}>Call ({message})</button>
         </>
     )
 }

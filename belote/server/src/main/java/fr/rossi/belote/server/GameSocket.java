@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-@ServerEndpoint("/game/{username}")
+@ServerEndpoint("/socket/game/{username}")
 @ApplicationScoped
 public class GameSocket {
 

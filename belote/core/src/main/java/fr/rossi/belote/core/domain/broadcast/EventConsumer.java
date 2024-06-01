@@ -7,4 +7,6 @@ public interface EventConsumer {
     default void consume(Event event) {
     }
 
+    default void setBroadcast(Broadcast broadcast) {
+    }
 }

@@ -1,5 +1,7 @@
 #game {
     display: flex;
+    background-color: #107E3A;
+    color: white;
 }
 
 #game div {
@@ -8,11 +10,10 @@
 }
 
 #playground {
-    width: 800px;
-    border: 1px red solid;
+    width: 1000px;
+    min-height: 500px;
 }
 
-#infos {
-    width: 200px;
-    border: 1px red solid;
+#right-panel {
+    margin: 20px;
 }

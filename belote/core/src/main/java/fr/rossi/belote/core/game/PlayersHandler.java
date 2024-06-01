@@ -6,6 +6,7 @@ import fr.rossi.belote.core.utils.Params;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class PlayersHandler {
@@ -31,6 +32,14 @@ public class PlayersHandler {
 
     public List<Player> players() {
         return this.players;
+    }
+
+    public Optional<Player> playerByName(String name) {
+        return this.players.stream().filter(p -> p.name().equals(name)).findAny();
+    }
+
+    public Team otherTeam(Team team) {
+        return this.teams().stream().filter(t -> !t.equals(team)).findAny().orElseThrow();
     }
 
     private PlayersHandler next(int startIndex) {

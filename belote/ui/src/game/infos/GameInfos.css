@@ -1,0 +1,32 @@
+#infos {
+    width: 200px;
+}
+
+#infos>div>p {
+    font-weight: bold;
+}
+
+#infos>div {
+    margin: -1px;
+}
+
+#scores>div {
+    margin: 0.3em;
+}
+
+#scores hr {
+    width: 70%;
+}
+
+#scores>div>div {
+    width: 30%;
+    display: inline-flex;
+}
+
+#scores>div>div:first-child {
+    justify-content: center;
+}
+
+#scores>div>div:last-child {
+    justify-content: center;
+}

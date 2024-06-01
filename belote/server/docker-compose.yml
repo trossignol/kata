@@ -1,0 +1,10 @@
+version: '3'
+services:
+  belote:
+    image: europe-west9-docker.pkg.dev/belote-403119/belote/belote:0.0.1-SNAPSHOT
+    build:
+      context: .
+      platforms:
+        - "linux/amd64"
+    ports:
+      - 8080:8080

@@ -2,7 +2,7 @@ package fr.rossi.belote.server;
 
 import fr.rossi.belote.core.domain.Team;
 import fr.rossi.belote.core.game.Game;
-import fr.rossi.belote.core.player.SimplePlayer;
+import fr.rossi.belote.core.player.brain.BrainPlayer;
 import fr.rossi.belote.server.async.AsyncWait;
 import fr.rossi.belote.server.message.in.InMessage;
 import fr.rossi.belote.server.message.in.StartGame;
@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 @ApplicationScoped
 public class GameService {
 
-    private static final Executor executor = Executors.newFixedThreadPool(4);
+    private static final Executor executor = Executors.newVirtualThreadPerTaskExecutor();
     @Inject
     GameSocket socket;
 
@@ -35,16 +35,14 @@ public class GameService {
         executor.execute(() -> {
             log.info("Start game for user={}", username);
             var p1A = new ServerPlayer(username, this.socket);
-            var p1B = new SimplePlayer("Partner");
-            var p2A = new SimplePlayer("Opponent 1");
-            var p2B = new SimplePlayer("Opponent 2");
+            var p1B = new BrainPlayer("Partner");
+            var p2A = new BrainPlayer("Opponent 1");
+            var p2B = new BrainPlayer("Opponent 2");
 
             var t1 = new Team(1, List.of(p1A, p1B));
             var t2 = new Team(2, List.of(p2A, p2B));
 
-            var game = new Game(List.of(t1, t2));
-            p1A.start(List.of(p1A, p2A, p1B, p2B));
-            game.play();
+            new Game(List.of(t1, t2)).play();
         });
     }
 }

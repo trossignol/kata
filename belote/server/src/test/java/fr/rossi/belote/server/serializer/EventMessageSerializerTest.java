@@ -1,7 +1,6 @@
 package fr.rossi.belote.server.serializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.rossi.belote.core.card.Card;
 import fr.rossi.belote.core.card.Color;
 import fr.rossi.belote.core.card.Figure;
@@ -17,20 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static fr.rossi.belote.server.serializer.SerializerTestHelper.assertEqualsMap;
+import static fr.rossi.belote.server.serializer.SerializerTestHelper.serialize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 class EventMessageSerializerTest {
-
-    private static final ObjectMapper jsonMapper = new ObjectMapper();
-
-    static {
-        new JacksonConfig().customize(jsonMapper);
-    }
-
-    private static void assertEqualsMap(Object expected, Object value) {
-        assertEquals(jsonMapper.convertValue(expected, Map.class), value);
-    }
 
     @Test
     void testSerializeTrumpChosen() throws JsonProcessingException {
@@ -45,10 +36,7 @@ class EventMessageSerializerTest {
         var uuid = UUID.randomUUID().toString();
 
         var message = new EventMessage(event).playerId(playerId).gameId(gameId).uuid(uuid);
-
-        var json = jsonMapper.convertValue(message, Map.class);
-        System.out.println(jsonMapper.writeValueAsString(message));
-        System.out.println(json);
+        var json = serialize(message);
 
         assertEquals(event.getClass().getSimpleName(), json.get("type"));
         assertEqualsMap(card, json.get("card"));
@@ -75,10 +63,7 @@ class EventMessageSerializerTest {
         var uuid = UUID.randomUUID().toString();
 
         var message = new EventMessage(event).playerId(playerId).gameId(gameId).uuid(uuid);
-
-        var json = jsonMapper.convertValue(message, Map.class);
-        System.out.println(jsonMapper.writeValueAsString(message));
-        System.out.println(json);
+        var json = serialize(message);
 
         assertEquals(event.getClass().getSimpleName(), json.get("type"));
         assertEqualsMap(winner, json.get("winner"));

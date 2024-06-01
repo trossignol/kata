@@ -22,7 +22,7 @@ class TrickPlayableTest {
     }
 
     private static Collection<Card> play(Color trump, Figure f1, Color c1, Figure f2, Color c2) {
-        return new TrickBuilder(trump).card(P1, f1, c1).card(P2, f2, c2).build().playableCards(P3);
+        return new TrickBuilder(trump).card(P1, f1, c1).card(P2, f2, c2).build().playableCards(P3, P3.hand());
     }
 
     @Test
@@ -30,7 +30,7 @@ class TrickPlayableTest {
         assertEquals(HAND,
                 new TrickBuilder(Color.COEUR)
                         .build()
-                        .playableCards(P3));
+                        .playableCards(P3, P3.hand()));
     }
 
     @Test

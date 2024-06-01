@@ -1,0 +1,23 @@
+#debug {
+    display: flex;
+    border: 1px white solid;
+    margin-top: 10px;
+}
+
+#debug-actions {
+    margin: 10px 20px;
+    text-align: center;
+}
+
+#debug-actions>button {
+    margin: 2px auto;
+}
+
+#debug-log {
+    width: 1000px;
+}
+
+#debug p {
+    font-size: 10pt;
+    color: white;
+}

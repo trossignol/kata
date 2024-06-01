@@ -3,6 +3,7 @@ package fr.rossi.belote.core.score;
 import fr.rossi.belote.core.domain.Team;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,7 +16,9 @@ class ScoreCalculatorTest {
     private static void check(Team trumpTeam, Team lastWinnerTeam, Optional<Team> beloteTeam,
                               int t1InScore, int t2InScore, int t1OutScore, int t2OutScore) {
         assertEquals(Map.of(T1, t1OutScore, T2, t2OutScore),
-                new ScoreCalculator(Map.of(T1, t1InScore, T2, t2InScore), trumpTeam, lastWinnerTeam, beloteTeam)
+                new ScoreCalculator(List.of(T1, T2),
+                        Map.of(T1, t1InScore, T2, t2InScore),
+                        trumpTeam, lastWinnerTeam, beloteTeam)
                         .getScoresForPoints().runScores());
     }
 
@@ -41,6 +44,13 @@ class ScoreCalculatorTest {
     @Test
     void testShutout() {
         check(152, 0, 252, 0);
+    }
+
+    @Test
+    void testShutoutWithMissingInMap() {
+        assertEquals(Map.of(T1, 252, T2, 0),
+                new ScoreCalculator(List.of(T1, T2), Map.of(T1, 152), T1, T1, Optional.empty())
+                        .getScoresForPoints().runScores());
     }
 
     @Test

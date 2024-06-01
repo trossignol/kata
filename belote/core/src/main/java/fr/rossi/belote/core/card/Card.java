@@ -1,9 +1,9 @@
 package fr.rossi.belote.core.card;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
 
 public record Card(Figure figure, Color color) implements Comparable<Card> {
 
@@ -18,6 +18,13 @@ public record Card(Figure figure, Color color) implements Comparable<Card> {
 
     public static int nbCards() {
         return Figure.values().length * Color.values().length;
+    }
+
+    public static String printHand(Collection<Card> cards) {
+        return cards.stream().collect(groupingBy(Card::color))
+                .entrySet().stream().map(e -> String.format("\t%s: %s", e.getKey(),
+                        e.getValue().stream().map(Card::figure).toList()))
+                .collect(joining(System.lineSeparator()));
     }
 
     public int getPoints(Color trump) {

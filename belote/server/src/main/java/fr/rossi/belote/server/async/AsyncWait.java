@@ -1,5 +1,6 @@
 package fr.rossi.belote.server.async;
 
+import fr.rossi.belote.core.exception.ActionTimeoutException;
 import fr.rossi.belote.core.exception.TechnicalException;
 import lombok.SneakyThrows;
 
@@ -26,7 +27,7 @@ public class AsyncWait {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Optional<T> waitFor(String uuid, int delayInSeconds, boolean errorOnNoAnswer) {
+    public static <T> Optional<T> waitFor(String uuid, int delayInSeconds, ActionTimeoutException exception) throws ActionTimeoutException {
         waitedKeys.add(uuid);
         var stepInMs = 100;
         var delayInMs = delayInSeconds * 1_000;
@@ -40,15 +41,12 @@ public class AsyncWait {
             }
         }
 
-        TechnicalException.assertFalse(
-                String.format("No response for uuid=%s after=%ds", uuid, delayInSeconds),
-                errorOnNoAnswer);
-        return Optional.empty();
+        throw exception;
     }
 
     public static void response(String uuid, Object response) {
         TechnicalException.assertNotNull("Uuid is required", uuid);
-        TechnicalException.assertNotNull("Reponse is required", response);
+        TechnicalException.assertNotNull("Response is required", response);
         TechnicalException.assertTrue(
                 String.format("Response not expected for uuid=%s (value=%s)", uuid, response),
                 waitedKeys.contains(uuid));

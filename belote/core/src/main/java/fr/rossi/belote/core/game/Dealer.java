@@ -5,6 +5,7 @@ import fr.rossi.belote.core.domain.Player;
 import fr.rossi.belote.core.domain.broadcast.Broadcast;
 import fr.rossi.belote.core.domain.event.ChooseTrump;
 import fr.rossi.belote.core.domain.event.TrumpChosen;
+import fr.rossi.belote.core.exception.ActionTimeoutException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -29,14 +30,13 @@ public class Dealer {
         this.cards = new ArrayList<>(cards);
     }
 
-    public Optional<TrumpParams> deal() {
+    public Optional<TrumpParams> deal() throws ActionTimeoutException {
         this.players.forEach(Player::clearHand);
         // TODO TRO Player -2 Cut cards
         // TODO TRO Player -1 Deal (ask 3-2 or 2-3)
 
         this.deal(3);
         this.deal(2);
-        // TODO TRO Ask for trump
 
         var trumpCard = this.popCards(1).get(0);
         return this.chooseTrump(trumpCard)
@@ -47,7 +47,7 @@ public class Dealer {
                 });
     }
 
-    private Optional<TrumpParams> chooseTrump(Card card) {
+    private Optional<TrumpParams> chooseTrump(Card card) throws ActionTimeoutException {
         log.debug("Choose trump: {}", card);
         this.broadcast.consume(new ChooseTrump(card, this.players.get(0)));
         for (var round = 1; round <= 2; round++) {
