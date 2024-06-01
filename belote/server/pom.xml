@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <quarkus.platform.version>3.2.4.Final</quarkus.platform.version>
+        <quarkus.platform.version>3.7.1</quarkus.platform.version>
     </properties>
     <dependencyManagement>
         <dependencies>

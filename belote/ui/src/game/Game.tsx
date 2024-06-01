@@ -23,7 +23,6 @@ export const Game = ({ name }: GameProps) => {
     const [hand, setHand] = useState<Card[]>([]);
     const [roundEnded, setRoundEnded] = useState<any>(null);
     const [socketParams, setSocketParams] = useState<SocketParams>({ name: name })
-    const [progress, setProgress] = useState(0);
 
     const socket = new GameSocket([socketParams, setSocketParams]);
 
@@ -71,7 +70,6 @@ export const Game = ({ name }: GameProps) => {
     }
 
     socket.onMessage((message: any) => {
-        setProgress(progress + 1);
         setCurrentStatus(message.type);
         setLastMessage(() => message);
         updateInfosFromMessage(message);
@@ -95,11 +93,6 @@ export const Game = ({ name }: GameProps) => {
                         table={table}
                         winner={lastMessage?.leader || lastMessage?.winner}
                         trumpInfos={infos.trump} />
-
-                    <div>
-                        <ProgressBar progress={progress} duration={5000} />
-                        <button onClick={() => setProgress(progress + 1)}>RAZ</button>
-                    </div>
 
 
                     {socket.isConnected()
