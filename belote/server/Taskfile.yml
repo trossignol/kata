@@ -1,0 +1,27 @@
+version: 3
+tasks:
+  default: run
+  dev:
+    cmd: quarkus dev
+  build:
+    sources:
+      - pom.xml
+      - src/**
+    generates:
+      - target/*-runner.jar
+    cmd: mvn clean package
+  run:
+    deps: [ build ]
+    cmd: quarkus run
+
+  docker-build:
+    deps: [ build ]
+    cmd: docker-compose build belote
+  docker-run:
+    cmd: docker-compose run belote
+  docker-push:
+    cmd: docker-compose push belote
+  deploy:
+    cmds:
+      - export GCP_PROJECT_ID=belote-403119
+      - mvn clean package appengine:deploy -DskipTests

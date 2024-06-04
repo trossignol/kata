@@ -1,0 +1,7 @@
+version: 3
+tasks:
+  build:
+    sources:
+      - pom.xml
+      - src/**
+    cmd: mvn clean install

@@ -1,0 +1,17 @@
+version: 3
+tasks:
+  build:
+    sources:
+      - package.json
+      - vite.config.js
+      - src/**
+    generates:
+      - ../server/src/main/resources/META-INF/resources/**
+    cmds:
+      - rm -rf dist
+      - npm run build
+      - rm -rf ../server/src/main/resources/META-INF/resources
+      - mkdir -p ../server/src/main/resources/META-INF/resources
+      - cp -r dist ../server/src/main/resources/META-INF/resources
+  dev:
+    cmd: npm run dev

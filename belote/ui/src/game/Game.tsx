@@ -3,7 +3,6 @@ import "./Game.css";
 import { GameSocket, SocketParams } from './Websocket';
 import { ChooseTrump } from './actions/ChooseTrump';
 import { Hand } from './actions/Hand';
-import ProgressBar from './base/ProgressBar';
 import { Table } from './base/Table';
 import { Card, CardAndPlayer, Player, equalCards } from './base/domain.d';
 import { WebSocketDebug } from './debug/WebSocketDebug';

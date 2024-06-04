@@ -1,0 +1,18 @@
+version: 3
+includes:
+  core:
+    taskfile: ./core/Taskfile.yml
+    dir: ./core
+  server:
+    taskfile: ./server/Taskfile.yml
+    dir: ./server
+  ui:
+    taskfile: ./ui/Taskfile.yml
+    dir: ./ui
+tasks:
+  build:
+    deps: [ core:build, ui:build ]
+    cmd:
+      task: server:docker-build
+  dev:
+    deps: [ server:dev, ui:dev ]
